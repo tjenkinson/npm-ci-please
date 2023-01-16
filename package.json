@@ -1,6 +1,6 @@
 {
   "name": "npm-ci-please",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "`npm ci` with a fallback to `npm i` when it fails, but shouldn't",
   "bin": "src/index.js",
   "scripts": {
