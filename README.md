@@ -32,7 +32,7 @@ Note this fallback is not intended to mimick exactly what `npm ci` does. E.g. wi
 ## Usage
 
 ```sh
-npx npm-ci-please@1
+npx -y npm-ci-please@1
 ```
 
 If you want to skip even trying the native `npm ci` and go straight to the workaround add the `--skip-native` flag.
