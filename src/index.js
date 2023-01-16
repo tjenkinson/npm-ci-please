@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const { readFileSync, writeFileSync } = require('node:fs');
+const { readFileSync, writeFileSync, rmSync } = require('node:fs');
 const { spawn } = require('node:child_process');
 
-const skipNative = process.argv.slice(2).includes(`--skip-native`);
+const skipNative = process.argv.slice(2).includes('--skip-native');
 
 const onSigInt = new Set();
 
@@ -34,14 +34,14 @@ const exec = (command, ...args) => {
 };
 
 const readPackageLock = () => {
-  return readFileSync(`./package-lock.json`, {
+  return readFileSync('./package-lock.json', {
     encoding: 'utf8',
   });
 };
 
 const tryNative = async () => {
   try {
-    await exec(`npm`, `ci`);
+    await exec('npm', 'ci');
   } catch (e) {
     return exception;
   }
@@ -52,14 +52,18 @@ const tryNative = async () => {
 const tryWorkaround = async () => {
   const packageLock = readPackageLock();
 
+  log('Removing node_modules');
+  rmSync('./node_modules', { recursive: true, force: true });
+
+  log('Running `npm install`');
   try {
-    await exec(`npm`, `install`);
+    await exec('npm', 'install');
   } catch {
     return exception;
   }
 
   if (readPackageLock() !== packageLock) {
-    writeFileSync(`./package-lock.json`, packageLock);
+    writeFileSync('./package-lock.json', packageLock);
     return invalidPackageLock;
   }
 
@@ -91,16 +95,16 @@ const go = async () => {
     process.exit(0);
   }
   if (workaroundRes === invalidPackageLock) {
-    log(`Failed: package-lock.json changed and is therefore not in sync`);
+    log('Failed: package-lock.json changed and is therefore not in sync');
   } else {
-    log(`Failed: unexpected error`);
+    log('Failed: unexpected error');
   }
 
   process.exit(1);
 };
 
 go().catch((e) => {
-  console.error(`Unexpected error`);
+  console.error('Unexpected error');
   console.error(e);
   process.exit(1);
 });

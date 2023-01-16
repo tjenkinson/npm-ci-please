@@ -24,6 +24,7 @@ Ideally npm will fix this bug and this workaround will not be needed.
 This tool will first run `npm ci`, and if that doesn't work it will:
 
 - take a copy of the current "package-lock.json"
+- remove "node_modules"
 - run `npm install`
 - check if "package-lock.json" contents has changed, and if it has exit with 1, otherwise exit with 0
 
