@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { readFileSync, writeFileSync } = require('node:fs');
 const { spawn } = require('node:child_process');
 
