@@ -4,6 +4,9 @@ const { readFileSync, writeFileSync, rmSync } = require('node:fs');
 const { spawn } = require('node:child_process');
 
 const skipNative = process.argv.slice(2).includes('--skip-native');
+const resetPackageLock = !process.argv
+  .slice(2)
+  .includes('--do-not-reset-package-lock');
 
 const onSigInt = new Set();
 
@@ -63,7 +66,8 @@ const tryWorkaround = async () => {
   }
 
   if (readPackageLock() !== packageLock) {
-    writeFileSync('./package-lock.json', packageLock);
+    if (resetPackageLock) writeFileSync('./package-lock.json', packageLock);
+
     return invalidPackageLock;
   }
 
