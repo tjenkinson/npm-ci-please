@@ -2,6 +2,7 @@
 
 const { readFileSync, writeFileSync, rmSync } = require('node:fs');
 const { spawn } = require('node:child_process');
+const assert = require('node:assert/strict');
 
 const skipNative = process.argv.slice(2).includes('--skip-native');
 const resetPackageLock = !process.argv
@@ -15,6 +16,15 @@ const log = (msg) => console.log(`[npm-ci-please] ${msg}`);
 const invalidPackageLock = Symbol('invalidPackageLock');
 const exception = Symbol('exception');
 const success = Symbol('success');
+
+const deepEqual = (a, b) => {
+  try {
+    assert.deepStrictEqual(a, b);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 
 const exec = (command, ...args) => {
   return new Promise((resolve, reject) => {
@@ -65,9 +75,11 @@ const tryWorkaround = async () => {
     return exception;
   }
 
-  if (readPackageLock() !== packageLock) {
-    if (resetPackageLock) writeFileSync('./package-lock.json', packageLock);
+  const newPackageLock = readPackageLock();
 
+  if (resetPackageLock) writeFileSync('./package-lock.json', packageLock);
+
+  if (!deepEqual(JSON.parse(newPackageLock), JSON.parse(packageLock))) {
     return invalidPackageLock;
   }
 
