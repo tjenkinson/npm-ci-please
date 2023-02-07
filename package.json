@@ -24,7 +24,7 @@
   "homepage": "https://github.com/tjenkinson/npm-ci-please#readme",
   "devDependencies": {
     "husky": "8.0.3",
-    "lint-staged": "13.1.0",
+    "lint-staged": "13.1.1",
     "prettier": "2.8.3"
   }
 }
